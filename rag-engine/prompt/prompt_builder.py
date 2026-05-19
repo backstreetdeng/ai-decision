@@ -3,12 +3,25 @@ from pathlib import Path
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "rag_prompt.txt"
 
 
-def build_prompt(question: str, contexts: list[str]) -> str:
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
+def load_prompt_template():
 
-    context_text = "\n\n".join(contexts)
+    with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
+        return f.read()
 
-    return template.format(
+
+def build_prompt(question, contexts):
+
+    context_text = ""
+
+    for idx, ctx in enumerate(contexts):
+
+        context_text += f"[Context {idx+1}]\n{ctx}\n\n"
+
+    template = load_prompt_template()
+
+    prompt = template.format(
         context=context_text,
         question=question
     )
+
+    return prompt
