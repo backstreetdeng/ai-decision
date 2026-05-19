@@ -1,0 +1,75 @@
+卷 新加卷 的文件夹 PATH 列表
+卷序列号为 3A9E-E8E5
+E:.
+│  1.txt
+│  
+├─agents
+│  ├─market-agent
+│  ├─strategy-agent
+│  └─user-agent
+├─api
+│      app.py
+│      
+├─database
+│  ├─models
+│  ├─pgvector
+│  └─session
+├─llm-gateway
+│  │  prompt_builder.py
+│  │  qwen_client.py
+│  │  
+│  └─templates
+└─rag-engine
+    ├─chunker
+    │      semantic_chunk.py
+    │      splitter.py
+    │      text_chunker.py
+    │      
+    ├─embedding
+    │  │  config.py
+    │  │  main.py
+    │  │  启动方式.txt
+    │  │  
+    │  ├─models
+    │  │      request_models.py
+    │  │      
+    │  ├─routers
+    │  │      embedding_router.py
+    │  │      
+    │  ├─services
+    │  │      embedding_service.py
+    │  │      
+    │  └─utils
+    │          logger.py
+    │          
+    ├─parser
+    │      pdf_parser.py
+    │      ppt_parser.py
+    │      text_cleaner.py
+    │      word_parser.py
+    │      
+    ├─pipeline
+    │      rag_pipeline.py
+    │      
+    ├─rerank
+    │  │  config.py
+    │  │  main.py
+    │  │  启动方式.txt
+    │  │  
+    │  ├─models
+    │  │      request_models.py
+    │  │      
+    │  ├─routers
+    │  │      rerank_router.py
+    │  │      
+    │  ├─services
+    │  │      rerank_service.py
+    │  │      
+    │  └─utils
+    │          logger.py
+    │          
+    └─retrieval
+            hybrid_search.py
+            metadata_filter.py
+            vector_search.py
+            
