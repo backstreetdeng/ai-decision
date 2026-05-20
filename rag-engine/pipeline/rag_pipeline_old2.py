@@ -29,7 +29,7 @@ class RAGPipeline:
 
         self.parser = PDFParser()
 
-        self.chunker = TextChunker(chunk_size=500, chunk_overlap=100)
+        self.chunker = TextChunker()
 
         self.embedding_service = EmbeddingService()
 
@@ -44,10 +44,6 @@ class RAGPipeline:
     car_model: str = None,
     publish_date=None
     ):
-        """
-        企业级 PDF Ingestion
-        支持 page_number -> chunk -> embedding -> PGVectorDB
-        """
 
         print("1. 开始解析 PDF...")
 
@@ -79,7 +75,7 @@ class RAGPipeline:
 
                 })
 
-        print(f"Chunk 总数: {len(all_chunks)}")
+        print(f"Chunk 数量: {len(all_chunks)}")
 
         print("3. 开始 Embedding...")
 

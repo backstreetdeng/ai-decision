@@ -35,9 +35,20 @@ def rerank(
 
     for item in rerank_results["results"]:
 
-        reranked_docs.append({
-            "document": item["document"],
-            "score": item["score"]
-        })
+        for original_doc in documents:
+
+            if original_doc["document"] == item["document"]:
+
+                reranked_docs.append({
+
+                    "document": original_doc["document"],
+
+                    "score": item["score"],
+
+                    "metadata": original_doc["metadata"]
+
+                })
+
+                break
 
     return reranked_docs

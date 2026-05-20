@@ -25,13 +25,19 @@ class PDFParser:
     def parse(file_path: str) -> str:
         """
         解析 PDF 文件
+        [
+            {
+                "page": 1,
+                "text": "..."
+            }
+        ]        
         """
 
         doc = fitz.open(file_path)
 
-        texts = []
+        pages = []
 
-        for page in doc:
+        for page_index, page in enumerate(doc):
 
             text = page.get_text()
 
@@ -39,6 +45,9 @@ class PDFParser:
 
                 clean_text = PDFParser.clean_text(text)
 
-                texts.append(clean_text)
+                pages.append({
+                    "page": page_index + 1,
+                    "text": clean_text
+                })
 
-        return "\n".join(texts)
+        return pages

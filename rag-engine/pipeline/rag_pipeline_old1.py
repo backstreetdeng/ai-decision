@@ -29,67 +29,36 @@ class RAGPipeline:
 
         self.parser = PDFParser()
 
-        self.chunker = TextChunker(chunk_size=500, chunk_overlap=100)
+        self.chunker = TextChunker()
 
         self.embedding_service = EmbeddingService()
 
         self.vectordb = PGVectorDB()
 
     def ingest_pdf(
-    self,
-    file_path: str,
-    source: str = None,
-    brand: str = None,
-    category: str = None,
-    car_model: str = None,
-    publish_date=None
+        self,
+        file_path: str,
+        source: str = None,
+        brand: str = None,
+        category: str = None,
+        car_model: str = None,
+        publish_date=None
     ):
-        """
-        企业级 PDF Ingestion
-        支持 page_number -> chunk -> embedding -> PGVectorDB
-        """
 
         print("1. 开始解析 PDF...")
 
-        pages = self.parser.parse(file_path)
-
-        print(f"PDF 页数: {len(pages)}")
+        text = self.parser.parse(file_path)
 
         print("2. 开始 Chunk...")
 
-        all_chunks = []
+        chunks = self.chunker.split_text(text)
 
-        for page in pages:
-
-            page_number = page["page"]
-
-            page_text = page["text"]
-
-            chunks = self.chunker.split_text(
-                page_text
-            )
-
-            for chunk in chunks:
-
-                all_chunks.append({
-
-                    "content": chunk,
-
-                    "page_number": page_number
-
-                })
-
-        print(f"Chunk 总数: {len(all_chunks)}")
+        print(f"Chunk 数量: {len(chunks)}")
 
         print("3. 开始 Embedding...")
 
-        chunk_texts = [
-            chunk["content"]
-            for chunk in all_chunks
-        ]
-
         embeddings = self.embedding_service.embed_documents(
-            chunk_texts
+            chunks
         )
 
         print("4. 写入 documents 表...")
@@ -109,7 +78,7 @@ class RAGPipeline:
 
         self.vectordb.add_chunks(
             document_id=document_id,
-            chunks=all_chunks,
+            chunks=chunks,
             embeddings=embeddings,
             source=source,
             brand=brand,

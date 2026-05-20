@@ -14,10 +14,6 @@ print("\n========== ANSWER ==========\n")
 
 print(result["answer"])
 
-print("\n========== CONTEXT ==========\n")
-
-for idx, ctx in enumerate(result["contexts"]):
-
-    print(f"\n--- CONTEXT {idx+1} ---")
-
-    print(ctx[:500])
+print("\n========== CITATIONS ==========\n")
+for c in result["citations"]:
+    print(f"{c['file_name']} 第{c['page_number']}页 (score: {c['score']})")

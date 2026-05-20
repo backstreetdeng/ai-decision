@@ -24,15 +24,24 @@ pipeline = RAGPipeline()
 #     category="零件手册"
 # )
 
+# pipeline.ingest_pdf(
+#     "tesla.pdf",
+#     source="tesla质保",
+#     brand="tesla",
+#     category="质保手册"
+# )
+
 pipeline.ingest_pdf(
-    "tesla.pdf",
-    source="tesla质保",
-    brand="tesla",
-    category="质保手册"
+    file_path="tesla.pdf",
+    source="Tesla",
+    brand="Tesla",
+    category="电池",
+    car_model="Model Y",
+    publish_date="2025-12-01"
 )
 
 results = pipeline.search(
-    "动力电池装置"
+    "model Y 电池质保期"
 )
 
 print(results)

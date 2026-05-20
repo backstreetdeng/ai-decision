@@ -41,7 +41,7 @@ def search_documents(
         c.car_model,
         c.publish_date,
         c.metadata,
-
+        c.page_number,
         d.file_name,
 
         1 - (c.embedding <=> %s::vector) AS score
@@ -86,6 +86,7 @@ def search_documents(
                 "car_model": row["car_model"],
                 "publish_date": str(row["publish_date"]),
                 "file_name": row["file_name"],
+                "page_number": row["page_number"],
                 "metadata": row["metadata"]
             }
         })

@@ -5,57 +5,32 @@ from prompt.prompt_builder import build_prompt
 from llm.answer_generator import generate_answer
 
 
-def chat(question: str, top_k: int = 5, score_threshold: float = 0):
-    """
-    企业级 RAG Chat
-    返回：
-    - question: 用户问题
-    - answer: LLM 回答
-    - contexts: top_k 上下文
-    - citations: 可追踪来源，包含 file_name + page_number + score
-    """
+def chat(question: str):
 
-    # 1. Retrieval
+    # 1. retrieval
     retrieved_docs = retrieve(question)
-
-    # for d in retrieved_docs:
-    #     print(d["document"][:50], d["metadata"])
-
-    if not retrieved_docs:
-        return {
-            "question": question,
-            "answer": "没有检索到相关内容",
-            "contexts": [],
-            "citations": []
-        }
 
     # 2. rerank
     reranked_docs = rerank(
         query=question,
-        documents=retrieved_docs,
-        top_k=top_k
+        documents=retrieved_docs
     )
 
     # 3. topk
     # top_docs = reranked_docs[:5]
-    # 优化 只保留 score > score_threshold 的 chunk
+    # 优化
     top_docs = [
-    {
-        "document": doc["document"],
-        "metadata": doc["metadata"],
-        "score": doc["score"]
-    }
+    doc
     for doc in reranked_docs
-    if doc["score"] > score_threshold
-    ][:top_k]
+    if doc["score"] > 0
+    ][:5]
 
-    # 上下文文本
     contexts = [
         doc["document"]
         for doc in top_docs
     ]
 
-    # Citation 输出
+    # citation sources
     citations = []
     for doc in top_docs:
 
@@ -67,7 +42,6 @@ def chat(question: str, top_k: int = 5, score_threshold: float = 0):
         # })
         citations.append({
             "file_name": doc["metadata"]["file_name"],
-            "page_number": doc["metadata"].get("page_number"),
             "score": round(doc["score"], 2)
         })
 

@@ -71,20 +71,23 @@ class PGVectorDB:
         publish_date=None
     ):
         """
-        批量写入 chunks 表
+        批量写入 chunks 表，支持 page_number
+        chunks 现在每个元素是 dict: {"content": str, "page_number": int}
+        embeddings 对应每个 chunk 的向量
         """
 
         values = [
             (
                 document_id,
-                chunk,
+                chunk["content"],
                 embedding,
                 idx,
                 source,
                 brand,
                 car_model,
                 publish_date,
-                json.dumps({})
+                chunk.get("page_number"),  # 新增字段
+                json.dumps({})             # metadata 保留空结构，未来可扩展
             )
             for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings))
         ]
@@ -102,6 +105,7 @@ class PGVectorDB:
                 brand,
                 car_model,
                 publish_date,
+                page_number,
                 metadata
             )
             VALUES %s
@@ -126,6 +130,7 @@ class PGVectorDB:
                 id,
                 content,
                 metadata,
+                page_number,
                 embedding <=> %s::vector AS distance
             FROM chunks
             ORDER BY distance
