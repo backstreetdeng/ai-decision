@@ -1,3 +1,4 @@
+import json
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -20,10 +21,10 @@ def get_connection():
         cursor_factory=RealDictCursor
     )
 
-
 def search_documents(
     query: str,
-    top_k: int = 10
+    top_k: int = 10,
+    metadata_filter: dict = None
 ):
 
     query_embedding = embedding_service.embed_query(query)
@@ -92,3 +93,77 @@ def search_documents(
         })
 
     return documents
+
+def insert_chunk(chunks: list):
+    """
+    批量插入 chunk 到 chunks 表
+    chunk 结构示例：
+    {
+        "document_id": int | None,
+        "content": str,
+        "embedding": list[float],  # 1024维
+        "chunk_index": int,
+        "source": str,
+        "brand": str | None,
+        "car_model": str | None,
+        "publish_date": str | None,
+        "metadata": dict,
+        "page_number": str | None
+    }
+    """
+    conn = get_connection()
+
+    cur = conn.cursor()
+
+    insert_sql = """
+        INSERT INTO chunks (
+            document_id, content, embedding, chunk_index,
+            source, brand, car_model, publish_date, metadata, page_number
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+
+    for chunk in chunks:
+        cur.execute(
+            insert_sql,
+            (
+                chunk.get("document_id"),
+                chunk.get("content"),
+                chunk.get("embedding"),
+                chunk.get("chunk_index", 0),
+                chunk.get("source"),
+                chunk.get("brand"),
+                chunk.get("car_model"),
+                chunk.get("publish_date"),
+                json.dumps(chunk.get("metadata", {})),
+                chunk.get("page_number")
+            )
+        )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def insert_chat_history(chats: list):
+    conn = get_connection()
+
+    cur = conn.cursor()
+
+    insert_sql = """
+        INSERT INTO chat_history (session_id, role, content)
+        VALUES (%s, %s, %s)
+    """
+
+    for chat in chats:
+        cur.execute(
+            insert_sql,
+            (
+                chat.get("session_id"),
+                chat.get("role"),
+                chat.get("content")
+            )
+        )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+

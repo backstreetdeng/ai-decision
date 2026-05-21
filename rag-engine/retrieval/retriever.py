@@ -1,6 +1,6 @@
 from retrieval.vector_store import search_documents
 
-def retrieve(query: str, top_k: int = 5):
+def retrieve(query: str, top_k: int = 10, metadata_filter: dict = None):
     """
     企业级 Retriever
     返回：
@@ -21,9 +21,9 @@ def retrieve(query: str, top_k: int = 5):
 
     # search_documents 返回的每个 item 应该包含:
     # content, metadata (metadata 里可以是 file_name, page_number 等)
-    raw_results = search_documents(query=query, top_k=top_k)
+    raw_results = search_documents(query=query, top_k=top_k, metadata_filter=metadata_filter)
 
-    # print(f"看下result:{raw_results[:3]}")
+    # print(f"******result******:{raw_results[:3]}")
 
     results = []
     for row in raw_results:

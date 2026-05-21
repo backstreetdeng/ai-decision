@@ -1,8 +1,13 @@
-from llm.clients.qwen_client import generate
+from llm.clients.qwen_client import generate, generate_stream
 
 
 def generate_answer(prompt: str):
 
-    answer = generate(prompt)
+    return generate(prompt)
 
-    return answer
+def generate_answer_stream(prompt: str):
+    """
+    流式生成回答（返回生成器，需迭代调用）
+    """    
+    # 返回生成器
+    return generate_stream(prompt)
